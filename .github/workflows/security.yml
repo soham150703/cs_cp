@@ -39,11 +39,8 @@ jobs:
           nohup streamlit run vulnerable_app.py &
         timeout-minutes: 1
 
-      # Run OWASP ZAP for dynamic vulnerability scanning
-      - name: OWASP ZAP Scan
-        uses: zapbot/zap-action@v0.5.0
-        with:
-          target: 'http://127.0.0.1:8501'
-          cmd_options: '-daemon -config api.disablekey=true'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # Install and Run OWASP ZAP Docker for Dynamic Analysis
+      - name: Run OWASP ZAP Scan
+        run: |
+          docker pull owasp/zap2docker-stable
+          docker run -t owasp/zap2docker-stable zap-baseline.py -t http://127.0.0.1:8501
